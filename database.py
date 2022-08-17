@@ -67,3 +67,13 @@ def updateDb (cpf, saldo, conn):
 
     except:
         return False
+
+
+def deleteDb (cpf, conn):
+    try:
+        conn.execute("DELETE from CLIENTES where CPF = '{}'" .format(cpf))
+        conn.execute("DELETE from CONTAS where CPF = '{}'" .format(cpf))
+        return True
+        
+    except:
+        return False
