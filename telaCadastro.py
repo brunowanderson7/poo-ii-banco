@@ -83,7 +83,7 @@ class Ui_TelaCadastro(object):
 
     def retranslateUi(self, TelaCadastro):
         _translate = QtCore.QCoreApplication.translate
-        TelaCadastro.setWindowTitle(_translate("TelaCadastro", "MainWindow"))
+        TelaCadastro.setWindowTitle(_translate("TelaCadastro", "Cadastro"))
         self.labelNome.setText(_translate("TelaCadastro", "Nome:"))
         self.labelCpf.setText(_translate("TelaCadastro", "CPF:"))
         self.labelEndereco.setText(_translate("TelaCadastro", "Endereco:"))
