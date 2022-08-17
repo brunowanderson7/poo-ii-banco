@@ -1,3 +1,4 @@
+import hashlib
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PyQt5 import QtWidgets
@@ -153,7 +154,8 @@ class Main(QMainWindow, Ui_Main):
         senha = self.telaCadastro.lineSenha.text()
 
         if(nome != '' and cpf != '' and dt_nascimento != '' and endereco != '' and senha != ''):
-            user = Cliente(cpf, nome, dt_nascimento, endereco, senha)
+            senha = hashlib.md5(senha.encode())
+            user = Cliente(cpf, nome, dt_nascimento, endereco, str(senha.hexdigest()))
             userAcc = Conta(cpf, 0)
             if(database.insertDb(user, userAcc, self.conn)):
                 self.telaCadastro.lineNome.setText('')
@@ -176,8 +178,8 @@ class Main(QMainWindow, Ui_Main):
 
         if(cpf != '' and senha != ''):
             p = database.getClienteDb(cpf, self.conn)
-
-            if(p):
+            senha = hashlib.md5(senha.encode())
+            if(p and senha.hexdigest() == p.senha):
                 self.globalUser = p
                 self.globalUserAcc = database.getContaDb(self.globalUser.cpf, self.conn)
                 self.telaLogin.lineCpf.setText('')
@@ -216,7 +218,8 @@ class Main(QMainWindow, Ui_Main):
         senha = self.telaSaque.lineSenha.text()
 
         if(valor != '' and senha != ''):
-            if(senha == self.globalUser.senha):
+            senha = hashlib.md5(senha.encode())
+            if(senha.hexdigest() == self.globalUser.senha):
                 if(self.globalUserAcc.saca(float(valor), self.conn)):
                     self.telaSaque.lineValor.setText('')
                     self.telaSaque.lineSenha.setText('')
@@ -241,7 +244,8 @@ class Main(QMainWindow, Ui_Main):
         senha = self.TelaTransfere.lineSenha.text()
 
         if(destino != '' and valor != '' and senha != ''):
-            if(senha == self.globalUser.senha):
+            senha = hashlib.md5(senha.encode())
+            if(senha.hexdigest() == self.globalUser.senha):
                 if(self.globalUserAcc.saldo >= float(valor)):
                     if(self.globalUserAcc.transfere(destino, float(valor), self.conn)):
                         self.TelaTransfere.lineDestino.setText('')

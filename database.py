@@ -52,7 +52,7 @@ def insertDb (cliente, conta, conn):
 
     else:
         cur = conn.cursor()
-        cur.execute("INSERT into CLIENTES (CPF, NOME, DT_NASCIMENTO, ENDERECO, SENHA) VALUES ('{}','{}','{}','{}', '{}')" .format(cliente.cpf, cliente.nome, cliente.dt_nascimento, cliente.endereco, cliente.senha))
+        cur.execute("INSERT into CLIENTES (CPF, NOME, DT_NASCIMENTO, ENDERECO, SENHA) VALUES ('{}','{}','{}','{}','{}')" .format(cliente.cpf, cliente.nome, cliente.dt_nascimento, cliente.endereco, cliente.senha))
         cur.execute("INSERT into CONTAS (CPF, SALDO) VALUES ('{}','{}')" .format(conta.cpf, conta.saldo))
         conn.commit()
         return True
@@ -74,6 +74,6 @@ def deleteDb (cpf, conn):
         conn.execute("DELETE from CLIENTES where CPF = '{}'" .format(cpf))
         conn.execute("DELETE from CONTAS where CPF = '{}'" .format(cpf))
         return True
-        
+
     except:
         return False
