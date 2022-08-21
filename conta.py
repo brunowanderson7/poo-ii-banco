@@ -1,4 +1,5 @@
 import database
+import datetime
 
 
 class Conta:
@@ -29,7 +30,8 @@ class Conta:
 
     def deposita(self, valor, conn):
         if(valor > 0):
-            if(database.updateDb(self.cpf, (self.saldo + valor), conn)):
+            registro = ("Deposito efetuado: Valor [R$: {}], Data[{}]" .format(valor, datetime.datetime.now()))
+            if(database.updateDb(self.cpf, (self.saldo + valor), registro, conn)):
                 self.saldo += valor
                 return True
 
@@ -39,7 +41,8 @@ class Conta:
 
     def saca(self, valor, conn):
         if(valor > 0 and self.saldo >= valor):
-            if(database.updateDb(self.cpf, (self.saldo - valor), conn)):
+            registro = ("Saque efetuado: Valor [R$: {}], Data[{}]" .format(valor, datetime.datetime.now()))
+            if(database.updateDb(self.cpf, (self.saldo - valor), registro, conn)):
                 self.saldo -= valor
                 return True
 
@@ -51,8 +54,16 @@ class Conta:
         destino = database.getContaDb(cpf, conn)
 
         if( destino and valor > 0 and self._saldo >= valor):
-            if(database.updateDb(self.cpf, (self.saldo - valor), conn)):
-                database.updateDb(destino.cpf, (destino.saldo + valor), conn)
+            registro = ("Transferência efetuada: CPF Destinatario [{}], Valor [R$: {}], Data[{}]" .format(cpf, valor, datetime.datetime.now()))
+            if(database.updateDb(self.cpf, (self.saldo - valor), registro, conn)):
+                registro = ("Transferência recebida: CPF Origem [{}], Valor [R$: {}], Data[{}]" .format(self.cpf, valor, datetime.datetime.now()))
+                database.updateDb(destino.cpf, (destino.saldo + valor), registro, conn)
                 return True
 
         return False
+    
+
+
+    def extrato(self, conn):
+        registro = ("Tirou extrato: Data[{}]" .format(datetime.datetime.now()))
+        return database.getHistoricoDb(self.cpf, registro, conn)

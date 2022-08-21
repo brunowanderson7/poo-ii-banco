@@ -1,7 +1,9 @@
 
 # banco de dados 
 
-import sqlite3
+import datetime
+import mysql.connector
+from mysql.connector import Error
 from cliente import Cliente
 from conta import Conta
 
@@ -12,18 +14,7 @@ from conta import Conta
 
 
 def conectDb():
-    conn = sqlite3.connect("database.db")
-    conn.execute('''CREATE TABLE IF NOT EXISTS CLIENTES
-    (CPF           TEXT    PRIMARY KEY   NOT NULL,
-    NOME           TEXT    NOT NULL,
-    DT_NASCIMENTO  TEXT    NOT NULL,
-    ENDERECO       TEXT    NOT NULL,
-    SENHA          TEXT    NOT NULL);''')
-
-    conn.execute('''CREATE TABLE IF NOT EXISTS CONTAS
-    (CPF           TEXT    PRIMARY KEY   NOT NULL,
-    SALDO          REAL   NOT NULL);''')
-
+    conn = mysql.connector.connect(host='localhost',user='root',password='@Pass12%',database='bank')
     return(conn)
 
 
@@ -32,18 +23,60 @@ def desconectDb(conn):
 
 
 def getContaDb(cpf, conn):
-    lista = conn.execute("SELECT CPF, SALDO from CONTAS")
-    for l in lista:
-        if l[0] == cpf:
-            return Conta(l[0], l[1])
+    
+    try:
+        cursor = conn.cursor(buffered = True)
+        cursor.execute("SELECT * from CONTAS where CPF = '{}'" .format(cpf))
+        userAcc = cursor.fetchall()
+        cursor.close()
+        if userAcc:
+            userAcc = userAcc[0]
+            return Conta(userAcc[0], userAcc[1])
+
+    except Error as e:
+        print("Erro ao acessar tabela MySQL", e)
+
     return False
 
+
+
 def getClienteDb(cpf, conn):
-    lista = conn.execute("SELECT CPF, NOME, DT_NASCIMENTO, ENDERECO, SENHA from CLIENTES")
-    for l in lista:
-        if l[0] == cpf:
-            return Cliente(l[0], l[1], l[2], l[3], l[4])
+
+    try:
+        cursor = conn.cursor(buffered = True)
+        cursor.execute("SELECT * from CLIENTES where CPF = '{}'" .format(cpf))
+        user = cursor.fetchall()
+        cursor.close()
+        if user:
+            user = user[0]
+            return Cliente(user[0], user[1], user[2], user[3], user[4])
+
+    except Error as e:
+        print("Erro ao acessar tabela MySQL", e)
+    
     return False
+
+
+
+def getHistoricoDb(cpf, registro, conn):
+
+    try:
+        cursor = conn.cursor(buffered = True)
+        name = ("HISTORICO{}" .format(cpf))
+        cursor.execute("SELECT INFO from {}" .format(name))
+        historico = cursor.fetchall()
+        cursor.execute("INSERT into {} (INFO) VALUES ('{}')" .format(name, registro))
+        conn.commit()
+        cursor.close()
+        if historico:
+            return (historico)
+
+    except Error as e:
+        print("Erro ao acessar tabela MySQL", e)
+    
+    return False
+    
+
 
 def insertDb (cliente, conta, conn):
     
@@ -51,28 +84,49 @@ def insertDb (cliente, conta, conn):
         return False
 
     else:
-        cur = conn.cursor()
-        cur.execute("INSERT into CLIENTES (CPF, NOME, DT_NASCIMENTO, ENDERECO, SENHA) VALUES ('{}','{}','{}','{}','{}')" .format(cliente.cpf, cliente.nome, cliente.dt_nascimento, cliente.endereco, cliente.senha))
-        cur.execute("INSERT into CONTAS (CPF, SALDO) VALUES ('{}','{}')" .format(conta.cpf, conta.saldo))
+        cursor = conn.cursor()
+        cursor.execute("INSERT into CLIENTES (CPF, NOME, DT_NASCIMENTO, ENDERECO, SENHA) VALUES ('{}','{}','{}','{}','{}')" .format(cliente.cpf, cliente.nome, cliente.dt_nascimento, cliente.endereco, cliente.senha))
+        cursor.execute("INSERT into CONTAS (CPF, SALDO) VALUES ('{}','{}')" .format(conta.cpf, conta.saldo))
+        
+        name = ("HISTORICO{}" .format(conta.cpf))
+        cursor.execute("CREATE TABLE {} (ID INT PRIMARY KEY NOT NULL AUTO_INCREMENT, INFO TEXT NOT NULL)" .format(name))
+
+        registro = ("Conta criada: {}" .format(datetime.datetime.now()))
+        cursor.execute("INSERT into {} (INFO) VALUES ('{}')" .format(name, registro))
+
+
         conn.commit()
+        cursor.close()
         return True
 
 
-def updateDb (cpf, saldo, conn):
+
+def updateDb (cpf, saldo, registro, conn):
         
     try:
-        conn.execute("UPDATE CONTAS set SALDO = '{}' where CPF = '{}'" .format(saldo, cpf))
+        cursor = conn.cursor()
+        name = ("HISTORICO{}" .format(cpf))
+        cursor.execute("UPDATE CONTAS set SALDO = '{}' where CPF = '{}'" .format(saldo, cpf))
+        cursor.execute("INSERT into {} (INFO) VALUES ('{}')" .format(name, registro))
         conn.commit()
+        cursor.close()
         return True
 
     except:
         return False
 
 
+
 def deleteDb (cpf, conn):
     try:
-        conn.execute("DELETE from CLIENTES where CPF = '{}'" .format(cpf))
-        conn.execute("DELETE from CONTAS where CPF = '{}'" .format(cpf))
+        cursor = conn.cursor()
+        cursor.execute("DELETE from CLIENTES where CPF = '{}'" .format(cpf))
+        cursor.execute("DELETE from CONTAS where CPF = '{}'" .format(cpf))
+
+        name = ("HISTORICO{}" .format(cpf))
+        cursor.execute("DROP TABLE {}" .format(name))
+        conn.commit()
+        cursor.close()
         return True
 
     except:

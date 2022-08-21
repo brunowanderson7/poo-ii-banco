@@ -3,13 +3,14 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PyQt5 import QtWidgets
 
-from telaCadastro import Ui_TelaCadastro as Ui_Cadastro
-from telaDepositar import Ui_MainWindow as Ui_Deposito
-from telaLogin import Ui_MainWindow as Ui_Login
-from telaMenu import Ui_MainWindow as Ui_Menu
-from telaSacar import Ui_MainWindow as Ui_Saque
-from telaTransferir import Ui_MainWindow as Ui_Transfere
-from telaUsuario import Ui_MainWindow as Ui_Usuario
+from telaCadastro import Ui_telaCadastro as Ui_Cadastro
+from telaDeposito import Ui_telaDeposito as Ui_Deposito
+from telaLogin import Ui_telaLogin as Ui_Login
+from telaMenu import Ui_telaMenu as Ui_Menu
+from telaSaque import Ui_telaSaque as Ui_Saque
+from telaTransfere import Ui_telaTransfere as Ui_Transfere
+from telaExcluir import Ui_telaExcluir as Ui_Excluir
+from telaExtrato import Ui_telaExtrato as Ui_Extrato
 
 import database
 from conta import Conta
@@ -33,6 +34,7 @@ class Ui_Main(QtWidgets.QWidget):
         self.stack4 = QtWidgets.QMainWindow()
         self.stack5 = QtWidgets.QMainWindow()
         self.stack6 = QtWidgets.QMainWindow()
+        self.stack7 = QtWidgets.QMainWindow()
 
 
         self.telaLogin = Ui_Login()
@@ -50,11 +52,14 @@ class Ui_Main(QtWidgets.QWidget):
         self.telaSaque = Ui_Saque()
         self.telaSaque.setupUi(self.stack4)
 
-        self.TelaTransfere = Ui_Transfere()
-        self.TelaTransfere.setupUi(self.stack5)
+        self.telaTransfere = Ui_Transfere()
+        self.telaTransfere.setupUi(self.stack5)
 
-        self.telaUsuario = Ui_Usuario()
-        self.telaUsuario.setupUi(self.stack6)
+        self.telaExtrato = Ui_Extrato()
+        self.telaExtrato.setupUi(self.stack6)
+
+        self.telaExcluir = Ui_Excluir()
+        self.telaExcluir.setupUi(self.stack7)
 
 
         self.QtStack.addWidget(self.stack0)
@@ -64,6 +69,7 @@ class Ui_Main(QtWidgets.QWidget):
         self.QtStack.addWidget(self.stack4)
         self.QtStack.addWidget(self.stack5)
         self.QtStack.addWidget(self.stack6)
+        self.QtStack.addWidget(self.stack7)
     
 
 
@@ -78,26 +84,28 @@ class Main(QMainWindow, Ui_Main):
 
 
         #navegação
-        self.telaLogin.buttonCadastre.clicked.connect(self.cadastre)
+        self.telaLogin.buttonCadatre.clicked.connect(self.cadastre)
         self.telaCadastro.buttonVoltar.clicked.connect(self.voltarLogin)
         self.telaMenu.buttonDepositar.clicked.connect(self.botaoDepositar)
         self.telaMenu.buttonSacar.clicked.connect(self.botaoSacar)
         self.telaDeposito.buttonVoltar.clicked.connect(self.voltarMenu)
         self.telaSaque.buttonVoltar.clicked.connect(self.voltarMenu)
-        self.TelaTransfere.buttonVoltar.clicked.connect(self.voltarMenu)
-        self.telaUsuario.buttonVoltar.clicked.connect(self.voltarMenu)
-        self.telaMenu.buttonVoltar_5.clicked.connect(self.voltarLogin)
+        self.telaTransfere.buttonVoltar.clicked.connect(self.voltarMenu)
+        self.telaMenu.buttonSair.clicked.connect(self.voltarLogin)
         self.telaMenu.buttonTransferir.clicked.connect(self.botaoTransferir)
-        self.telaMenu.buttonUsuario.clicked.connect(self.botaoUsuario)
+        self.telaMenu.buttonExtrato.clicked.connect(self.botaoExtrato)
+        self.telaExtrato.buttonVoltar.clicked.connect(self.voltarMenu)
+        self.telaMenu.buttonExcluir.clicked.connect(self.botaoExcluir)
 
         #funcionalidades
-        self.telaCadastro.buttonCadastrar.clicked.connect(self.cadastrar)
-        self.telaLogin.buttonVoltar.clicked.connect(self.login)
+        self.telaCadastro.buttonCadatrar.clicked.connect(self.cadastrar)
+        self.telaLogin.buttonEntrar.clicked.connect(self.login)
         self.telaDeposito.buttonDepositar.clicked.connect(self.deposito)
-        self.telaSaque.buttonCadastrar.clicked.connect(self.saque)
-        self.TelaTransfere.buttonTransferir.clicked.connect(self.transfere)
-        self.telaUsuario.buttonCadastrar.clicked.connect(self.exibir)
+        self.telaSaque.buttonSaque.clicked.connect(self.saque)
+        self.telaTransfere.buttonTransferir.clicked.connect(self.transfere)
         self.telaLogin.buttonSair.clicked.connect(self.sair)
+        self.telaExcluir.buttonExcluir.clicked.connect(self.excluir)
+        self.telaExcluir.buttonVoltar.clicked.connect(self.voltarMenu)
     
 #navegação
     def cadastre(self):
@@ -108,7 +116,6 @@ class Main(QMainWindow, Ui_Main):
     def voltarLogin(self):
         self.telaCadastro.lineNome.setText('')
         self.telaCadastro.lineCpf.setText('')
-        self.telaCadastro.lineData.setText('')
         self.telaCadastro.lineEndereco.setText('')
         self.telaCadastro.lineSenha.setText('')
         self.globalUser = None
@@ -116,13 +123,13 @@ class Main(QMainWindow, Ui_Main):
         self.QtStack.setCurrentIndex(0)
     
     def voltarMenu(self):
-        self.telaDeposito.lineSenha.setText('')
+        self.telaDeposito.lineValor.setText('')
         self.telaSaque.lineValor.setText('')
         self.telaSaque.lineSenha.setText('')
-        self.TelaTransfere.lineDestino.setText('')
-        self.TelaTransfere.lineSenha.setText('')
-        self.TelaTransfere.lineValor.setText('')
-        self.telaUsuario.lineSenha.setText('*****')
+        self.telaTransfere.lineDestino.setText('')
+        self.telaTransfere.lineSenha.setText('')
+        self.telaTransfere.lineValor.setText('')
+        self.telaExtrato.listExtrato.clear()
         self.QtStack.setCurrentIndex(2)
 
     def botaoDepositar(self):
@@ -134,13 +141,14 @@ class Main(QMainWindow, Ui_Main):
     def botaoTransferir(self):
         self.QtStack.setCurrentIndex(5)
     
-    def botaoUsuario(self):
-        self.telaUsuario.lineCpf.setText(self.globalUser.cpf)
-        self.telaUsuario.lineNome.setText(self.globalUser.nome)
-        self.telaUsuario.lineEndereco.setText(self.globalUser.endereco)
-        self.telaUsuario.lineData.setText(self.globalUser.dt_nascimento)
-        self.telaUsuario.lineSenha.setText('*****')
+    def botaoExtrato(self):
         self.QtStack.setCurrentIndex(6)
+        historico = self.globalUserAcc.extrato(self.conn)
+        for x in historico:
+            self.telaExtrato.listExtrato.addItem(str(x))
+    
+    def botaoExcluir(self):
+        self.QtStack.setCurrentIndex(7)
 
 
 
@@ -160,7 +168,6 @@ class Main(QMainWindow, Ui_Main):
             if(database.insertDb(user, userAcc, self.conn)):
                 self.telaCadastro.lineNome.setText('')
                 self.telaCadastro.lineCpf.setText('')
-                self.telaCadastro.lineData.setText('')
                 self.telaCadastro.lineEndereco.setText('')
                 self.telaCadastro.lineSenha.setText('')
                 QMessageBox.information(None, "Bank", "Usauário cadastrado com sucesso!!")
@@ -184,7 +191,8 @@ class Main(QMainWindow, Ui_Main):
                 self.globalUserAcc = database.getContaDb(self.globalUser.cpf, self.conn)
                 self.telaLogin.lineCpf.setText('')
                 self.telaLogin.lineSenha.setText('')
-                self.telaMenu.slotSaldo.setText(str(self.globalUserAcc.saldo))
+                self.telaMenu.userName.setText(self.globalUser.nome)
+                self.telaMenu.userSaldo.setText(str(self.globalUserAcc.saldo))
                 self.QtStack.setCurrentIndex(2)
             
             else:
@@ -195,13 +203,13 @@ class Main(QMainWindow, Ui_Main):
         
     
     def deposito(self):
-        valor = self.telaDeposito.lineSenha.text()
+        valor = self.telaDeposito.lineValor.text()
 
         if(valor != ''):
             if(self.globalUserAcc.deposita(float(valor), self.conn)):
-                self.telaDeposito.lineSenha.setText('')
+                self.telaDeposito.lineValor.setText('')
                 self.globalUserAcc = database.getContaDb(self.globalUser.cpf, self.conn)
-                self.telaMenu.slotSaldo.setText(str(self.globalUserAcc.saldo))
+                self.telaMenu.userSaldo.setText(str(self.globalUserAcc.saldo))
                 QMessageBox.information(None, "Bank", "Deposito efetuado!!")
 
             else:
@@ -224,7 +232,7 @@ class Main(QMainWindow, Ui_Main):
                     self.telaSaque.lineValor.setText('')
                     self.telaSaque.lineSenha.setText('')
                     self.globalUserAcc = database.getContaDb(self.globalUser.cpf, self.conn)
-                    self.telaMenu.slotSaldo.setText(str(self.globalUserAcc.saldo))
+                    self.telaMenu.userSaldo.setText(str(self.globalUserAcc.saldo))
                     QMessageBox.information(None, "Bank", "Saque efetuado!!")
 
 
@@ -239,20 +247,20 @@ class Main(QMainWindow, Ui_Main):
     
 
     def transfere(self):
-        destino = self.TelaTransfere.lineDestino.text()
-        valor = self.TelaTransfere.lineValor.text()
-        senha = self.TelaTransfere.lineSenha.text()
+        destino = self.telaTransfere.lineDestino.text()
+        valor = self.telaTransfere.lineValor.text()
+        senha = self.telaTransfere.lineSenha.text()
 
         if(destino != '' and valor != '' and senha != ''):
             senha = hashlib.md5(senha.encode())
             if(senha.hexdigest() == self.globalUser.senha):
                 if(self.globalUserAcc.saldo >= float(valor)):
                     if(self.globalUserAcc.transfere(destino, float(valor), self.conn)):
-                        self.TelaTransfere.lineDestino.setText('')
-                        self.TelaTransfere.lineValor.setText('')
-                        self.TelaTransfere.lineSenha.setText('')
+                        self.telaTransfere.lineDestino.setText('')
+                        self.telaTransfere.lineValor.setText('')
+                        self.telaTransfere.lineSenha.setText('')
                         self.globalUserAcc = database.getContaDb(self.globalUser.cpf, self.conn)
-                        self.telaMenu.slotSaldo.setText(str(self.globalUserAcc.saldo))
+                        self.telaMenu.userSaldo.setText(str(self.globalUserAcc.saldo))
                         QMessageBox.information(None, "Bank", "Transferência efetuada!!")
 
                     else:
@@ -268,12 +276,23 @@ class Main(QMainWindow, Ui_Main):
             QMessageBox.information(None, "Bank", "Preencha todos os campos!!")
     
 
-    def exibir(self):
-        x = self.telaUsuario.lineSenha.text()
-        if(x == '*****'):
-            self.telaUsuario.lineSenha.setText(self.globalUser.senha)
+    def excluir(self):
+        cpf = self.telaExcluir.lineCpf.text()
+        senha = self.telaExcluir.lineSenha.text()
+
+        if(cpf != '' and senha != ''):
+            p = database.getClienteDb(cpf, self.conn)
+            senha = hashlib.md5(senha.encode())
+            if(p and senha.hexdigest() == p.senha):
+                database.deleteDb(self.globalUser.cpf, self.conn)
+                self.voltarLogin()
+            
+            else:
+                QMessageBox.information(None, "Bank", "Dados invalidos!!")
+            
         else:
-            self.telaUsuario.lineSenha.setText('*****')
+            QMessageBox.information(None, "Bank", "Preencha todos os campos!!")
+        
 
     
 

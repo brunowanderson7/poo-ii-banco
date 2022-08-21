@@ -11,54 +11,135 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(640, 478)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
-        self.labelCpf = QtWidgets.QLabel(self.centralwidget)
-        self.labelCpf.setGeometry(QtCore.QRect(20, 20, 47, 13))
+class Ui_telaLogin(object):
+    def setupUi(self, telaLogin):
+        telaLogin.setObjectName("telaLogin")
+        telaLogin.resize(479, 640)
+        telaLogin.setWindowOpacity(1.0)
+        telaLogin.setStyleSheet(".QFrame {\n"
+"    background-color: rgba(25,25,112,0.8);\n"
+"}")
+        self.frameLogin = QtWidgets.QFrame(telaLogin)
+        self.frameLogin.setGeometry(QtCore.QRect(100, 160, 271, 221))
+        self.frameLogin.setStyleSheet("\n"
+".QFrame#frameLogin {\n"
+"    background-color: rgba(255,250,240,0.6);\n"
+"    border-radius: 1em;\n"
+"    border-width: 1px;\n"
+"    border-style: solid;\n"
+"    border-color: rgb(0,0,0);\n"
+"}\n"
+"")
+        self.frameLogin.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frameLogin.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameLogin.setObjectName("frameLogin")
+        self.labelCpf = QtWidgets.QLabel(self.frameLogin)
+        self.labelCpf.setGeometry(QtCore.QRect(10, 10, 61, 31))
         font = QtGui.QFont()
-        font.setFamily("Bahnschrift")
-        font.setPointSize(13)
+        font.setPointSize(12)
         self.labelCpf.setFont(font)
+        self.labelCpf.setStyleSheet(".QLabel {\n"
+"    font-size: 2em;\n"
+"}")
         self.labelCpf.setObjectName("labelCpf")
-        self.lineCpf = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineCpf.setGeometry(QtCore.QRect(60, 20, 261, 20))
-        self.lineCpf.setObjectName("lineCpf")
-        self.labelSenha = QtWidgets.QLabel(self.centralwidget)
-        self.labelSenha.setGeometry(QtCore.QRect(20, 50, 47, 13))
+        self.labelSenha = QtWidgets.QLabel(self.frameLogin)
+        self.labelSenha.setGeometry(QtCore.QRect(10, 80, 61, 31))
         font = QtGui.QFont()
-        font.setFamily("Bahnschrift")
-        font.setPointSize(13)
+        font.setPointSize(12)
         self.labelSenha.setFont(font)
+        self.labelSenha.setStyleSheet(".QLabel {\n"
+"    font-size: 2em;\n"
+"}")
         self.labelSenha.setObjectName("labelSenha")
-        self.lineSenha = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineSenha.setGeometry(QtCore.QRect(70, 50, 251, 20))
+        self.lineSenha = QtWidgets.QLineEdit(self.frameLogin)
+        self.lineSenha.setGeometry(QtCore.QRect(10, 110, 251, 31))
+        self.lineSenha.setStyleSheet(".QLineEdit{\n"
+"    border-radius: 0.5em;\n"
+"    border-width: 1px;\n"
+"    border-style: solid;\n"
+"    border-color: rgb(0,0,0);\n"
+"}")
         self.lineSenha.setObjectName("lineSenha")
-        self.buttonCadastre = QtWidgets.QPushButton(self.centralwidget)
-        self.buttonCadastre.setGeometry(QtCore.QRect(240, 80, 81, 23))
-        self.buttonCadastre.setObjectName("buttonCadastre")
-        self.buttonVoltar = QtWidgets.QPushButton(self.centralwidget)
-        self.buttonVoltar.setGeometry(QtCore.QRect(150, 80, 81, 23))
-        self.buttonVoltar.setObjectName("buttonVoltar")
-        self.buttonSair = QtWidgets.QPushButton(self.centralwidget)
-        self.buttonSair.setGeometry(QtCore.QRect(60, 80, 81, 23))
+        self.lineCpf = QtWidgets.QLineEdit(self.frameLogin)
+        self.lineCpf.setGeometry(QtCore.QRect(10, 40, 251, 31))
+        self.lineCpf.setStyleSheet(".QLineEdit{\n"
+"    border-radius: 0.5em;\n"
+"    border-width: 1px;\n"
+"    border-style: solid;\n"
+"    border-color: rgb(0,0,0);\n"
+"}")
+        self.lineCpf.setObjectName("lineCpf")
+        self.buttonSair = QtWidgets.QPushButton(self.frameLogin)
+        self.buttonSair.setGeometry(QtCore.QRect(10, 160, 71, 41))
+        self.buttonSair.setStyleSheet(".QPushButton{\n"
+"    background-color: rgb(75,0,130);\n"
+"    color: rgb(255,255,255);\n"
+"    border-radius: 0.5em;\n"
+"    border-width: 1px;\n"
+"    border-style: solid;\n"
+"    border-color: rgb(0,0,0);\n"
+"}\n"
+"\n"
+".QPushButton:hover{\n"
+"    background-color: rgba(75,0,130,0.6);\n"
+"}")
         self.buttonSair.setObjectName("buttonSair")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        self.buttonEntrar = QtWidgets.QPushButton(self.frameLogin)
+        self.buttonEntrar.setGeometry(QtCore.QRect(100, 160, 71, 41))
+        self.buttonEntrar.setStyleSheet(".QPushButton{\n"
+"    background-color: rgb(75,0,130);\n"
+"    color: rgb(255,255,255);\n"
+"    border-radius: 0.5em;\n"
+"    border-width: 1px;\n"
+"    border-style: solid;\n"
+"    border-color: rgb(0,0,0);\n"
+"}\n"
+"\n"
+".QPushButton:hover{\n"
+"    background-color: rgba(75,0,130,0.6);\n"
+"}")
+        self.buttonEntrar.setObjectName("buttonEntrar")
+        self.buttonCadatre = QtWidgets.QPushButton(self.frameLogin)
+        self.buttonCadatre.setGeometry(QtCore.QRect(190, 160, 71, 41))
+        self.buttonCadatre.setStyleSheet(".QPushButton{\n"
+"    background-color: rgb(75,0,130);\n"
+"    color: rgb(255,255,255);\n"
+"    border-radius: 0.5em;\n"
+"    border-width: 1px;\n"
+"    border-style: solid;\n"
+"    border-color: rgb(0,0,0);\n"
+"}\n"
+"\n"
+".QPushButton:hover{\n"
+"    background-color: rgba(75,0,130,0.6);\n"
+"}")
+        self.buttonCadatre.setObjectName("buttonCadatre")
+        self.logo = QtWidgets.QLabel(telaLogin)
+        self.logo.setGeometry(QtCore.QRect(150, -40, 161, 161))
+        font = QtGui.QFont()
+        font.setFamily("Broadway")
+        font.setPointSize(26)
+        self.logo.setFont(font)
+        self.logo.setStyleSheet(".QLabel#logo{\n"
+"    color: rgb(255,255,255);\n"
+"    text-align: rigth;\n"
+"}")
+        self.logo.setObjectName("logo")
+        self.line = QtWidgets.QFrame(telaLogin)
+        self.line.setGeometry(QtCore.QRect(0, 70, 491, 16))
+        self.line.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line.setObjectName("line")
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi(telaLogin)
+        QtCore.QMetaObject.connectSlotsByName(telaLogin)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, telaLogin):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Login"))
-        self.labelCpf.setText(_translate("MainWindow", "CPF:"))
-        self.labelSenha.setText(_translate("MainWindow", "Senha:"))
-        self.buttonCadastre.setText(_translate("MainWindow", "Cadastre-se"))
-        self.buttonVoltar.setText(_translate("MainWindow", "Entrar"))
-        self.buttonSair.setText(_translate("MainWindow", "Sair"))
+        telaLogin.setWindowTitle(_translate("telaLogin", "LOGIN"))
+        self.labelCpf.setText(_translate("telaLogin", "CPF"))
+        self.labelSenha.setText(_translate("telaLogin", "SENHA"))
+        self.buttonSair.setText(_translate("telaLogin", "SAIR"))
+        self.buttonEntrar.setText(_translate("telaLogin", "ENTRAR"))
+        self.buttonCadatre.setText(_translate("telaLogin", "CADASTRAR"))
+        self.logo.setText(_translate("telaLogin", "P-BANK"))

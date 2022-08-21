@@ -11,83 +11,177 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_TelaCadastro(object):
-    def setupUi(self, TelaCadastro):
-        TelaCadastro.setObjectName("TelaCadastro")
-        TelaCadastro.resize(640, 480)
-        self.centralwidget = QtWidgets.QWidget(TelaCadastro)
-        self.centralwidget.setObjectName("centralwidget")
-        self.labelNome = QtWidgets.QLabel(self.centralwidget)
-        self.labelNome.setGeometry(QtCore.QRect(30, 30, 47, 13))
-        font = QtGui.QFont()
-        font.setFamily("Bahnschrift")
-        font.setPointSize(13)
-        self.labelNome.setFont(font)
-        self.labelNome.setObjectName("labelNome")
-        self.labelCpf = QtWidgets.QLabel(self.centralwidget)
-        self.labelCpf.setGeometry(QtCore.QRect(30, 60, 47, 13))
-        font = QtGui.QFont()
-        font.setFamily("Bahnschrift")
-        font.setPointSize(13)
-        self.labelCpf.setFont(font)
-        self.labelCpf.setObjectName("labelCpf")
-        self.labelEndereco = QtWidgets.QLabel(self.centralwidget)
-        self.labelEndereco.setGeometry(QtCore.QRect(30, 90, 71, 16))
-        font = QtGui.QFont()
-        font.setFamily("Bahnschrift")
-        font.setPointSize(13)
-        self.labelEndereco.setFont(font)
-        self.labelEndereco.setObjectName("labelEndereco")
-        self.labelData = QtWidgets.QLabel(self.centralwidget)
-        self.labelData.setGeometry(QtCore.QRect(30, 120, 151, 16))
-        font = QtGui.QFont()
-        font.setFamily("Bahnschrift")
-        font.setPointSize(13)
-        self.labelData.setFont(font)
-        self.labelData.setObjectName("labelData")
-        self.labelSenha = QtWidgets.QLabel(self.centralwidget)
-        self.labelSenha.setGeometry(QtCore.QRect(30, 150, 47, 13))
-        font = QtGui.QFont()
-        font.setFamily("Bahnschrift")
-        font.setPointSize(13)
-        self.labelSenha.setFont(font)
-        self.labelSenha.setObjectName("labelSenha")
-        self.lineNome = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineNome.setGeometry(QtCore.QRect(80, 30, 251, 20))
-        self.lineNome.setObjectName("lineNome")
-        self.lineCpf = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineCpf.setGeometry(QtCore.QRect(70, 60, 261, 20))
+class Ui_telaCadastro(object):
+    def setupUi(self, telaCadastro):
+        telaCadastro.setObjectName("telaCadastro")
+        telaCadastro.resize(479, 640)
+        telaCadastro.setWindowOpacity(1.0)
+        telaCadastro.setStyleSheet(".QFrame {\n"
+"    background-color: rgba(25,25,112,0.8);\n"
+"}")
+        self.frameLogin = QtWidgets.QFrame(telaCadastro)
+        self.frameLogin.setGeometry(QtCore.QRect(100, 160, 271, 461))
+        self.frameLogin.setStyleSheet("\n"
+".QFrame#frameLogin {\n"
+"    background-color: rgba(255,250,240,0.6);\n"
+"    border-radius: 1em;\n"
+"    border-width: 1px;\n"
+"    border-style: solid;\n"
+"    border-color: rgb(0,0,0);\n"
+"}\n"
+"")
+        self.frameLogin.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frameLogin.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frameLogin.setObjectName("frameLogin")
+        self.lineCpf = QtWidgets.QLineEdit(self.frameLogin)
+        self.lineCpf.setGeometry(QtCore.QRect(10, 100, 251, 31))
+        self.lineCpf.setStyleSheet(".QLineEdit{\n"
+"    border-radius: 0.5em;\n"
+"    border-width: 1px;\n"
+"    border-style: solid;\n"
+"    border-color: rgb(0,0,0);\n"
+"}")
         self.lineCpf.setObjectName("lineCpf")
-        self.lineEndereco = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEndereco.setGeometry(QtCore.QRect(100, 90, 231, 20))
-        self.lineEndereco.setObjectName("lineEndereco")
-        self.lineData = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineData.setGeometry(QtCore.QRect(170, 120, 161, 20))
-        self.lineData.setObjectName("lineData")
-        self.lineSenha = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineSenha.setGeometry(QtCore.QRect(80, 150, 251, 20))
-        self.lineSenha.setObjectName("lineSenha")
-        self.buttonVoltar = QtWidgets.QPushButton(self.centralwidget)
-        self.buttonVoltar.setGeometry(QtCore.QRect(160, 180, 81, 23))
+        self.buttonVoltar = QtWidgets.QPushButton(self.frameLogin)
+        self.buttonVoltar.setGeometry(QtCore.QRect(20, 400, 71, 41))
+        self.buttonVoltar.setStyleSheet(".QPushButton{\n"
+"    background-color: rgb(75,0,130);\n"
+"    color: rgb(255,255,255);\n"
+"    border-radius: 0.5em;\n"
+"    border-width: 1px;\n"
+"    border-style: solid;\n"
+"    border-color: rgb(0,0,0);\n"
+"}\n"
+"\n"
+".QPushButton:hover{\n"
+"    background-color: rgba(75,0,130,0.6);\n"
+"}")
         self.buttonVoltar.setObjectName("buttonVoltar")
-        self.buttonCadastrar = QtWidgets.QPushButton(self.centralwidget)
-        self.buttonCadastrar.setGeometry(QtCore.QRect(250, 180, 81, 23))
-        self.buttonCadastrar.setObjectName("buttonCadastrar")
-        TelaCadastro.setCentralWidget(self.centralwidget)
-        self.statusbar = QtWidgets.QStatusBar(TelaCadastro)
-        self.statusbar.setObjectName("statusbar")
-        TelaCadastro.setStatusBar(self.statusbar)
+        self.buttonCadatrar = QtWidgets.QPushButton(self.frameLogin)
+        self.buttonCadatrar.setGeometry(QtCore.QRect(180, 400, 71, 41))
+        self.buttonCadatrar.setStyleSheet(".QPushButton{\n"
+"    background-color: rgb(75,0,130);\n"
+"    color: rgb(255,255,255);\n"
+"    border-radius: 0.5em;\n"
+"    border-width: 1px;\n"
+"    border-style: solid;\n"
+"    border-color: rgb(0,0,0);\n"
+"}\n"
+"\n"
+".QPushButton:hover{\n"
+"    background-color: rgba(75,0,130,0.6);\n"
+"}")
+        self.buttonCadatrar.setObjectName("buttonCadatrar")
+        self.labelNome = QtWidgets.QLabel(self.frameLogin)
+        self.labelNome.setGeometry(QtCore.QRect(10, 10, 61, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.labelNome.setFont(font)
+        self.labelNome.setStyleSheet(".QLabel {\n"
+"    font-size: 2em;\n"
+"}")
+        self.labelNome.setObjectName("labelNome")
+        self.lineNome = QtWidgets.QLineEdit(self.frameLogin)
+        self.lineNome.setGeometry(QtCore.QRect(10, 40, 251, 31))
+        self.lineNome.setStyleSheet(".QLineEdit{\n"
+"    border-radius: 0.5em;\n"
+"    border-width: 1px;\n"
+"    border-style: solid;\n"
+"    border-color: rgb(0,0,0);\n"
+"}")
+        self.lineNome.setObjectName("lineNome")
+        self.labelSenha = QtWidgets.QLabel(self.frameLogin)
+        self.labelSenha.setGeometry(QtCore.QRect(10, 130, 61, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.labelSenha.setFont(font)
+        self.labelSenha.setStyleSheet(".QLabel {\n"
+"    font-size: 2em;\n"
+"}")
+        self.labelSenha.setObjectName("labelSenha")
+        self.labelCpf = QtWidgets.QLabel(self.frameLogin)
+        self.labelCpf.setGeometry(QtCore.QRect(10, 70, 61, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.labelCpf.setFont(font)
+        self.labelCpf.setStyleSheet(".QLabel {\n"
+"    font-size: 2em;\n"
+"}")
+        self.labelCpf.setObjectName("labelCpf")
+        self.lineSenha = QtWidgets.QLineEdit(self.frameLogin)
+        self.lineSenha.setGeometry(QtCore.QRect(10, 160, 251, 31))
+        self.lineSenha.setStyleSheet(".QLineEdit{\n"
+"    border-radius: 0.5em;\n"
+"    border-width: 1px;\n"
+"    border-style: solid;\n"
+"    border-color: rgb(0,0,0);\n"
+"}")
+        self.lineSenha.setObjectName("lineSenha")
+        self.labelEndereco = QtWidgets.QLabel(self.frameLogin)
+        self.labelEndereco.setGeometry(QtCore.QRect(10, 190, 91, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.labelEndereco.setFont(font)
+        self.labelEndereco.setStyleSheet(".QLabel {\n"
+"    font-size: 2em;\n"
+"}")
+        self.labelEndereco.setObjectName("labelEndereco")
+        self.lineEndereco = QtWidgets.QLineEdit(self.frameLogin)
+        self.lineEndereco.setGeometry(QtCore.QRect(10, 220, 251, 31))
+        self.lineEndereco.setStyleSheet(".QLineEdit{\n"
+"    border-radius: 0.5em;\n"
+"    border-width: 1px;\n"
+"    border-style: solid;\n"
+"    border-color: rgb(0,0,0);\n"
+"}")
+        self.lineEndereco.setObjectName("lineEndereco")
+        self.labelData = QtWidgets.QLabel(self.frameLogin)
+        self.labelData.setGeometry(QtCore.QRect(10, 250, 51, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.labelData.setFont(font)
+        self.labelData.setStyleSheet(".QLabel {\n"
+"    font-size: 2em;\n"
+"}")
+        self.labelData.setObjectName("labelData")
+        self.lineData = QtWidgets.QDateEdit(self.frameLogin)
+        self.lineData.setGeometry(QtCore.QRect(10, 280, 251, 31))
+        self.lineData.setStyleSheet(".QDateEdit{\n"
+"    border-radius: 0.5em;\n"
+"    border-width: 1px;\n"
+"    border-style: solid;\n"
+"    border-color: rgb(0,0,0);\n"
+"}")
+        self.lineData.setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
+        self.lineData.setObjectName("lineData")
+        self.logo = QtWidgets.QLabel(telaCadastro)
+        self.logo.setGeometry(QtCore.QRect(150, -40, 161, 161))
+        font = QtGui.QFont()
+        font.setFamily("Broadway")
+        font.setPointSize(26)
+        self.logo.setFont(font)
+        self.logo.setStyleSheet(".QLabel#logo{\n"
+"    color: rgb(255,255,255);\n"
+"    text-align: rigth;\n"
+"}")
+        self.logo.setObjectName("logo")
+        self.line = QtWidgets.QFrame(telaCadastro)
+        self.line.setGeometry(QtCore.QRect(0, 70, 491, 16))
+        self.line.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line.setObjectName("line")
 
-        self.retranslateUi(TelaCadastro)
-        QtCore.QMetaObject.connectSlotsByName(TelaCadastro)
+        self.retranslateUi(telaCadastro)
+        QtCore.QMetaObject.connectSlotsByName(telaCadastro)
 
-    def retranslateUi(self, TelaCadastro):
+    def retranslateUi(self, telaCadastro):
         _translate = QtCore.QCoreApplication.translate
-        TelaCadastro.setWindowTitle(_translate("TelaCadastro", "Cadastro"))
-        self.labelNome.setText(_translate("TelaCadastro", "Nome:"))
-        self.labelCpf.setText(_translate("TelaCadastro", "CPF:"))
-        self.labelEndereco.setText(_translate("TelaCadastro", "Endereco:"))
-        self.labelData.setText(_translate("TelaCadastro", "Data de Nascimento:"))
-        self.labelSenha.setText(_translate("TelaCadastro", "Senha:"))
-        self.buttonVoltar.setText(_translate("TelaCadastro", "Voltar"))
-        self.buttonCadastrar.setText(_translate("TelaCadastro", "Cadastrar"))
+        telaCadastro.setWindowTitle(_translate("telaCadastro", "CADASTRO"))
+        self.buttonVoltar.setText(_translate("telaCadastro", "VOLTAR"))
+        self.buttonCadatrar.setText(_translate("telaCadastro", "CADASTRAR"))
+        self.labelNome.setText(_translate("telaCadastro", "NOME"))
+        self.labelSenha.setText(_translate("telaCadastro", "SENHA"))
+        self.labelCpf.setText(_translate("telaCadastro", "CPF"))
+        self.labelEndereco.setText(_translate("telaCadastro", "ENDEREÇO"))
+        self.labelData.setText(_translate("telaCadastro", "DATA"))
+        self.logo.setText(_translate("telaCadastro", "P-BANK"))
