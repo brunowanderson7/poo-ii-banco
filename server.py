@@ -180,7 +180,6 @@ print("Aguardando Mensagem...")
 while True:
     try:
         info = conn.recv(1024).decode()     #recebe menssagem do cliente
-        print(eval(info))
         asw = menu(eval(info), connDb)    #converção de string para lista na chamada da função
 
 
@@ -198,32 +197,3 @@ while True:
         serverSocket.close()
         print("Erro de comunicação!!")
         break
-
-
-
-
-
-'''
-while True:
-    try:
-        menssage = conn.recv(1024).decode()
-        if menssage == 'Exit':
-            serverSocket.close()
-            break
-
-        else:
-            print("Mensagem recebida: {}" .format(menssage))
-            menssage = input("Digite a mensagem a ser enviada: ")
-            conn.send(menssage.encode())
-    
-    except:
-        serverSocket.close()
-        print("Erro de comunicação!!")
-
-    
-    finally:
-        if menssage == 'Exit':
-            serverSocket.close()
-            print("Conexão encerrada!!")
-            break
-'''
