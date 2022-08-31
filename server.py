@@ -183,14 +183,12 @@ while True:
         print(eval(info))
         asw = menu(eval(info), connDb)    #converção de string para lista na chamada da função
 
-        print("resposta: ", asw)
 
         if asw[0] == 'exit':
             database.desconectDb(connDb)
             serverSocket.close()
             break
         else:
-            print("kkkelse")
             conn.send(str(asw).encode())     #envira resposta para o cliente
             asw = []
 
