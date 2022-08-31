@@ -158,7 +158,7 @@ class Main(QMainWindow, Ui_Main):
         info = [4, self.globalUser[1]]
         asw = self.sendMenssage(info)
         for x in asw:
-            self.telaExtrato.listExtrato.addItem(str(x))
+            self.telaExtrato.listExtrato.addItem(str(x)[2:-3])
     
     def botaoExcluir(self):
         self.QtStack.setCurrentIndex(7)
@@ -331,7 +331,7 @@ class Main(QMainWindow, Ui_Main):
     def sendMenssage(self, info):
 
         self.clientSocket.send(str(info).encode())
-        asw = self.clientSocket.recv(1024).decode()
+        asw = self.clientSocket.recv(4096).decode()
 
         return (eval(asw))
 
