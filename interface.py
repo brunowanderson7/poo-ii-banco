@@ -1,4 +1,4 @@
-import hashlib
+import socket
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PyQt5 import QtWidgets
@@ -77,10 +77,22 @@ class Main(QMainWindow, Ui_Main):
     def __init__(self, parent=None):
         super(Main, self).__init__(parent)
         self.setupUi(self)
-        self.conn = database.conectDb()
 
-        self.globalUser = None
-        self.globalUserAcc = None
+
+        self.globalUser = []    #lista com o usuario logado [nome, cpf, saldo]
+
+
+#-------Conexão como servidor---------------
+
+        self.ip = 'localhost'
+        self.port = 8000
+        self.addr = ((self.ip, self.port))
+
+        self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.clientSocket.connect(self.addr)
+
+#--------------------------------------------
+
 
 
         #navegação
@@ -143,8 +155,9 @@ class Main(QMainWindow, Ui_Main):
     
     def botaoExtrato(self):
         self.QtStack.setCurrentIndex(6)
-        historico = self.globalUserAcc.extrato(self.conn)
-        for x in historico:
+        info = [4, self.globalUser[1]]
+        asw = self.sendMenssage(info)
+        for x in asw:
             self.telaExtrato.listExtrato.addItem(str(x))
     
     def botaoExcluir(self):
@@ -162,10 +175,11 @@ class Main(QMainWindow, Ui_Main):
         senha = self.telaCadastro.lineSenha.text()
 
         if(nome != '' and cpf != '' and dt_nascimento != '' and endereco != '' and senha != ''):
-            senha = hashlib.md5(senha.encode())
-            user = Cliente(cpf, nome, dt_nascimento, endereco, str(senha.hexdigest()))
-            userAcc = Conta(cpf, 0)
-            if(database.insertDb(user, userAcc, self.conn)):
+
+            info = [7, cpf, senha, nome, endereco, dt_nascimento]
+            asw = self.sendMenssage(info)
+
+            if(asw[0]):
                 self.telaCadastro.lineNome.setText('')
                 self.telaCadastro.lineCpf.setText('')
                 self.telaCadastro.lineEndereco.setText('')
@@ -173,7 +187,7 @@ class Main(QMainWindow, Ui_Main):
                 QMessageBox.information(None, "Bank", "Usauário cadastrado com sucesso!!")
 
             else:
-                QMessageBox.information(None, "Bank", "O CPF informado ja esta cadastrado!!")
+                QMessageBox.information(None, "Bank", "Erro!!")
 
         else:
             QMessageBox.information(None, "Bank", "Preencha todos os campos!!")
@@ -184,15 +198,16 @@ class Main(QMainWindow, Ui_Main):
         senha = self.telaLogin.lineSenha.text()
 
         if(cpf != '' and senha != ''):
-            p = database.getClienteDb(cpf, self.conn)
-            senha = hashlib.md5(senha.encode())
-            if(p and senha.hexdigest() == p.senha):
-                self.globalUser = p
-                self.globalUserAcc = database.getContaDb(self.globalUser.cpf, self.conn)
+            info = [6, cpf, senha]
+            asw = self.sendMenssage(info)
+
+            if(asw[0]):
+                self.globalUser = [asw[1], asw[2], asw[3]]
+
                 self.telaLogin.lineCpf.setText('')
                 self.telaLogin.lineSenha.setText('')
-                self.telaMenu.userName.setText(self.globalUser.nome)
-                self.telaMenu.userSaldo.setText(str(self.globalUserAcc.saldo))
+                self.telaMenu.userName.setText(self.globalUser[0])
+                self.telaMenu.userSaldo.setText(str(self.globalUser[2]))
                 self.QtStack.setCurrentIndex(2)
             
             else:
@@ -200,17 +215,25 @@ class Main(QMainWindow, Ui_Main):
             
         else:
             QMessageBox.information(None, "Bank", "Preencha todos os campos!!")
-        
+
+
     
     def deposito(self):
         valor = self.telaDeposito.lineValor.text()
 
         if(valor != ''):
-            if(self.globalUserAcc.deposita(float(valor), self.conn)):
-                self.telaDeposito.lineValor.setText('')
-                self.globalUserAcc = database.getContaDb(self.globalUser.cpf, self.conn)
-                self.telaMenu.userSaldo.setText(str(self.globalUserAcc.saldo))
-                QMessageBox.information(None, "Bank", "Deposito efetuado!!")
+
+            if(float(valor) > 0):
+                info = [1, self.globalUser[1], float(valor)]
+                asw = self.sendMenssage(info)
+
+                if(asw[0]):
+
+                    self.telaDeposito.lineValor.setText('')
+                    del(self.globalUser[2])
+                    self.globalUser.append(asw[1])
+                    self.telaMenu.userSaldo.setText(str(self.globalUser[2]))
+                    QMessageBox.information(None, "Bank", "Deposito efetuado!!")
 
             else:
                 QMessageBox.information(None, "Bank", "Valor invalido!!")
@@ -226,13 +249,17 @@ class Main(QMainWindow, Ui_Main):
         senha = self.telaSaque.lineSenha.text()
 
         if(valor != '' and senha != ''):
-            senha = hashlib.md5(senha.encode())
-            if(senha.hexdigest() == self.globalUser.senha):
-                if(self.globalUserAcc.saca(float(valor), self.conn)):
+
+            if(float(valor) > 0 and float(valor) <= self.globalUser[2]):
+                info = [2, self.globalUser[1], senha, float(valor)]
+                asw = self.sendMenssage(info)
+
+                if(asw[0]):
                     self.telaSaque.lineValor.setText('')
                     self.telaSaque.lineSenha.setText('')
-                    self.globalUserAcc = database.getContaDb(self.globalUser.cpf, self.conn)
-                    self.telaMenu.userSaldo.setText(str(self.globalUserAcc.saldo))
+                    del(self.globalUser[2])
+                    self.globalUser.append(asw[1])
+                    self.telaMenu.userSaldo.setText(str(self.globalUser[2]))
                     QMessageBox.information(None, "Bank", "Saque efetuado!!")
 
 
@@ -252,25 +279,27 @@ class Main(QMainWindow, Ui_Main):
         senha = self.telaTransfere.lineSenha.text()
 
         if(destino != '' and valor != '' and senha != ''):
-            senha = hashlib.md5(senha.encode())
-            if(senha.hexdigest() == self.globalUser.senha):
-                if(self.globalUserAcc.saldo >= float(valor)):
-                    if(self.globalUserAcc.transfere(destino, float(valor), self.conn)):
-                        self.telaTransfere.lineDestino.setText('')
-                        self.telaTransfere.lineValor.setText('')
-                        self.telaTransfere.lineSenha.setText('')
-                        self.globalUserAcc = database.getContaDb(self.globalUser.cpf, self.conn)
-                        self.telaMenu.userSaldo.setText(str(self.globalUserAcc.saldo))
-                        QMessageBox.information(None, "Bank", "Transferência efetuada!!")
+            if(float(valor) > 0 and float(valor) <= self.globalUser[2]):
+                info = [3, self.globalUser[1], senha, float(valor), destino]
+                asw = self.sendMenssage(info)
 
-                    else:
-                        QMessageBox.information(None, "Bank", "Usuário destinado não existe!!")                    
+                if(asw[0]):
+                    self.telaTransfere.lineDestino.setText('')
+                    self.telaTransfere.lineValor.setText('')
+                    self.telaTransfere.lineSenha.setText('')
+
+                    del(self.globalUser[2])
+                    self.globalUser.append(asw[1])
+                    self.telaMenu.userSaldo.setText(str(self.globalUser[2]))
+                    QMessageBox.information(None, "Bank", "Transferência efetuada!!")
+
+ 
 
                 else:
-                    QMessageBox.information(None, "Bank", "Saldo insuficiente!!")
+                    QMessageBox.information(None, "Bank", "Senha incorreta ou usuario destinho não existe!!")
 
             else:
-                QMessageBox.information(None, "Bank", "Senha incorreta!!")
+                QMessageBox.information(None, "Bank", "Saldo insuficiente!!")
 
         else:
             QMessageBox.information(None, "Bank", "Preencha todos os campos!!")
@@ -281,23 +310,38 @@ class Main(QMainWindow, Ui_Main):
         senha = self.telaExcluir.lineSenha.text()
 
         if(cpf != '' and senha != ''):
-            p = database.getClienteDb(cpf, self.conn)
-            senha = hashlib.md5(senha.encode())
-            if(p and senha.hexdigest() == p.senha):
-                database.deleteDb(self.globalUser.cpf, self.conn)
-                self.voltarLogin()
+
+            if(cpf == self.globalUser[1]):
+
+                info = [5, cpf, senha]
+                asw = self.sendMenssage(info)
+                
+                if(asw[0]):
+                    self.telaExcluir.lineCpf.setText('')
+                    self.telaExcluir.lineSenha.setText('')
+                    self.voltarLogin()
             
             else:
                 QMessageBox.information(None, "Bank", "Dados invalidos!!")
             
         else:
             QMessageBox.information(None, "Bank", "Preencha todos os campos!!")
+    
+
+    def sendMenssage(self, info):
+
+        self.clientSocket.send(str(info).encode())
+        asw = self.clientSocket.recv(1024).decode()
+
+        return (eval(asw))
+
         
 
     
 
     def sair(self):
-        database.desconectDb(self.conn)
+        self.clientSocket.send(str([0]).encode())
+        self.clientSocket.close()
         sys.exit(app.exec_())
 
 
