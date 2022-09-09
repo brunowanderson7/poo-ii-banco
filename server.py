@@ -1,5 +1,7 @@
+import threading
 import socket
 import hashlib
+from time import sleep
 import database
 
 from conta import Conta
@@ -8,7 +10,7 @@ from cliente import Cliente
 
 
 #------------------ Menu
-def menu (info, connDb):
+def menu (info, connDb, threadLock):
 
     asw = []  #mensagem de resposta para o cliente
 
@@ -27,6 +29,7 @@ def menu (info, connDb):
         #deposito   [1, cpf, valor]
         
         if(user):
+            threadLock.acquire()
             if(userAcc.deposita(info[2], connDb)):
                 asw.append(True)
                 userAcc = database.getContaDb(info[1], connDb)
@@ -39,7 +42,8 @@ def menu (info, connDb):
         else:
             asw.append(False)
             asw.append(1)   #erro 1 usuário não cadastrado
-        
+        threadLock.release()
+
     
     elif info[0] == 2:
         #saque  [2, cpf, senha, valor]
@@ -48,6 +52,8 @@ def menu (info, connDb):
             senha = hashlib.md5(info[2].encode())
 
             if(senha.hexdigest() == user.senha):
+                threadLock.acquire()
+
                 if(userAcc.saca(info[3], connDb)):
                     asw.append(True)
                     userAcc = database.getContaDb(info[1], connDb)
@@ -64,6 +70,7 @@ def menu (info, connDb):
         else:
             asw.append(False)
             asw.append(1)   #erro 1 usuário não cadastrado
+        threadLock.release()
             
     
     elif info[0] == 3:
@@ -75,6 +82,7 @@ def menu (info, connDb):
                 senha = hashlib.md5(info[2].encode())
 
                 if(senha.hexdigest() == user.senha):
+                    threadLock.acquire()
 
                     if(userAcc.transfere(acc.cpf, float(info[3]), connDb)):
                         asw.append(True)
@@ -97,6 +105,7 @@ def menu (info, connDb):
         else:
             asw.append(False)
             asw.append(1)   #erro 1 usuário não cadastrado
+        threadLock.release()
     
 
     elif info[0] == 4:
@@ -112,8 +121,10 @@ def menu (info, connDb):
             senha = hashlib.md5(info[2].encode())
 
             if(senha.hexdigest() == user.senha):
+                threadLock.acquire()
                 database.deleteDb(info[1], connDb)
                 asw.append(True)
+                threadLock.release()
 
             else:
                 asw.append(False)
@@ -145,6 +156,7 @@ def menu (info, connDb):
         senha = hashlib.md5(info[2].encode())
         user = Cliente(info[1], info[3], info[5], info[4], senha.hexdigest())
         userAcc = Conta(info[1], 0)
+        threadLock.acquire()
 
         if(database.insertDb(user, userAcc, connDb)):
             asw.append(True)
@@ -153,9 +165,41 @@ def menu (info, connDb):
             asw.append(False)
             asw.append(6)   #erro 6 problema de conexão com database
 
+        threadLock.release()
+
 
     return asw
 #------------------ Menu
+
+
+class myThread (threading.Thread):
+    def __init__(self, clientAdress, conn, connDb):
+        threading.Thread.__init__(self)
+        self.conn = conn
+        self.connDb = connDb
+        self.threadLock = threading.Lock()
+        print("Conexão iniciada: ", clientAdress)
+    
+
+    def run (self):
+        while True:
+            try:
+                info = self.conn.recv(1024).decode()     #recebe menssagem do cliente
+                asw = menu(eval(info), self.connDb, self.threadLock)    #converção de string para lista na chamada da função
+
+
+                if asw[0] == 'exit':
+                    break
+                else:
+                    self.conn.send(str(asw).encode())     #envira resposta para o cliente
+                    asw = []
+
+            
+            except:
+                print("Erro de comunicação!!")
+                break
+    
+
 
 
 ip = 'localhost'
@@ -167,33 +211,15 @@ connDb = database.conectDb()
 
 
 serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+serverSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 serverSocket.bind(addr)
-serverSocket.listen(6)
 print("Aguardando conexão...")
 
-conn, clientt = serverSocket.accept()
-print("Conexão estabelecida!!")
-print("Aguardando Mensagem...")
 
 
 
 while True:
-    try:
-        info = conn.recv(1024).decode()     #recebe menssagem do cliente
-        asw = menu(eval(info), connDb)    #converção de string para lista na chamada da função
-
-
-        if asw[0] == 'exit':
-            database.desconectDb(connDb)
-            serverSocket.close()
-            break
-        else:
-            conn.send(str(asw).encode())     #envira resposta para o cliente
-            asw = []
-
-    
-    except:
-        database.desconectDb(connDb)
-        serverSocket.close()
-        print("Erro de comunicação!!")
-        break
+        serverSocket.listen(1)
+        conn, clientAdress = serverSocket.accept()
+        nThread = myThread(clientAdress, conn, connDb)
+        nThread.start()
