@@ -1,7 +1,6 @@
 import threading
 import socket
 import hashlib
-from time import sleep
 import database
 
 from conta import Conta
